@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>Periodontal Online Screening System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Saraban:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        :root{
+            --primary-color:#2c3e50;
+            --secondary-color:#3498db;
+            --low-risk:#27ae60;
+            --med-risk:#f39c12;
+            --high-risk:#e74c3c;
+            --bg-color:#f4f7f6;
+        }
+        body{
+            font-family:'Sarabun',sans-serif;
+            background-color:var(--bg-color);
+            color:var(--primary-color);
+            line-height:1.6;
+            margin:0;
+            padding:20px;  
+        }
+        .container{
+            max-width:600px;
+            margin:0 auto;
+            background: white;
+            padding:30px;
+            border-radius:15px;
+            box-shadow:0 4px 15px rgba(0,0,0,0.1);
+        }
+        h1{
+            text-align:center;
+            color:var(--secondary-color);
+            font-size:24px;
+            margin-bottom:30px;
+        }
+        .question-group{
+            margin-bottom:20px;
+            padding-bottom:15px;
+            border-bottom:1px solid #eee;
+        }
+        label{
+            display:block;
+            font-weight:bold;
+            margin-bottom:10px;
+        }
+        select{
+            width:100%;
+            padding:10px;
+            border-radius:8px;
+            border:1px solid #ddd;
+            font-size:16px;
+            font-family:'Sarabun',sans-serif;
+        }
+        button{
+            width:100%;
+            padding:15px;
+            background-color:var(--secondary-color);
+            color:white;
+            border:none;
+            border-radius:8px;
+            font-size:18px;
+            font-weight:bold;
+            cursor:pointer;
+            transition:background 0.3s;
+        }
+        button:hover{
+            background-color:#2980b9;
+        }
+
+        /* ส่วนที่เพิ่ม/แก้ไขสำหรับแสดงผล */
+        #result-area {
+            margin-top: 30px;
+            display: none;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            border: 2px solid transparent;
+        }
+        .risk_badge {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: block;
+        }
+        .score-text {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+        .advice {
+            background: rgba(255,255,255,0.8);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+            font-weight: 400;
+        }
+    </style>   
+</head>
+<body>
+    <div class="container">
+        <h1>ระบบคัดกรองโรคปริทันต์ออนไลน์</h1>
+        <form id="screeningForm">
+            <div class="question-group">
+                <label>1.อายุ (Age)</label>
+                <select name="age" required>
+                    <option value="" disabled selected>-- กรุณาเลือกประวัติ --</option>
+                    <option value="0">น้อยกว่า 40 ปี</option>
+                    <option value="2.0">40-54 ปี</option>
+                    <option value="3.5">มากกว่า 54 ปี</option>
+                </select>
+            </div>
+            <div class="question-group">
+                <label>2.เพศ (Gender)</label>
+                <select name="gender" required>
+                    <option value="" disabled selected>-- กรุณาเลือกประวัติ --</option>
+                    <option value="0">หญิง</option>
+                    <option value="1.0">ชาย</option>
+                </select>
+            </div>
+            <div class="question-group">
+                <label>3.มีเลือดออกขณะแปรงฟัน (Bleeding gums)</label>
+                <select name="bleeding" required>
+                    <option value="0">ไม่มี</option>
+                    <option value="1.0">มี</option>
+                </select>
+            </div>
+            <div class="question-group">
+                <label>4.ฟันโยก (Tooth mobility)</label>
+                <select name="mobility" required>
+                    <option value="" disabled selected>-- กรุณาเลือกประวัติ --</option>
+                    <option value="0">ไม่มี</option>
+                    <option value="2.5">มี</option>
+                </select>
+            </div>
+            <div class="question-group">
+                <label>5.การประเมินสุขภาพช่องปากด้วยตนเอง</label>
+                <select name="self" required>
+                    <option value="" disabled selected>-- กรุณาเลือกประวัติ --</option>
+                    <option value="0">ดี/ปกติ</option>
+                    <option value="1.0">ไม่ดี</option>
+                </select>
+            </div>
+            <div class="question-group">
+                <label>6.การใช้ไหมขัดฟัน (Dental flossing)</label>
+                <select name="floss" required>
+                    <option value="" disabled selected>-- กรุณาเลือกประวัติ --</option>
+                    <option value="0">ใช้สม่ำเสมอ</option>
+                    <option value="1.0">ไม่ใช้</option>
+                </select>
+            </div>
+            <div class="question-group">
+                <label>7.การตรวจฟันประจำปี (Dental check-up)</label>
+                <select name="checkup" required>
+                    <option value="" disabled selected>-- กรุณาเลือกประวัติ --</option>
+                    <option value="0">มากกว่าหรือเท่ากับ 1 ครั้ง/ปี</option>
+                    <option value="1.0">ไม่ตรวจฟันประจำปี</option>
+                </select>
+            </div>
+            <div class="question-group">
+                <label>8.ประวัติการวินิจฉัยโดยหมอฟัน (Diagnosis)</label>
+                <select name="diag" required>
+                    <option value="" disabled selected>-- กรุณาเลือกประวัติ --</option>
+                    <option value="0">ไม่เคยถูกทักว่าเป็นโรคเหงือก</option>
+                    <option value="1.5">เคยถูกทักว่าเป็นโรคเหงือก</option>
+                </select>
+            </div>
+            <button type="button" onclick="calculateScore()">ประมวลผลคะแนน</button>
+        </form>
+        <div id="result-area">
+            <span class="score-text">คะแนนของคุณคือ: <span id="score-display">0</span></span>
+            <span id="risk-level" class="risk_badge"></span>
+            <div class="advice">
+                <p id="advice-text"></p>
+            </div>
+        </div>
+    </div>
+    <script>
+        function calculateScore(){
+            const form = document.getElementById('screeningForm');
+            const formData = new FormData(form);
+            let totalScore = 0;
+
+            for(let value of formData.values()){
+                totalScore += parseFloat(value);
+            }
+
+            const resultArea = document.getElementById('result-area');
+            const riskLevel = document.getElementById('risk-level');
+            const scoreDisplay = document.getElementById('score-display');
+            const adviceText = document.getElementById('advice-text');
+
+            resultArea.style.display = 'block';
+            scoreDisplay.innerText = totalScore.toFixed(1);
+
+            if(totalScore < 4.5){
+                riskLevel.innerText = "เสี่ยงต่ำ (No/Mild)";
+                riskLevel.style.color = "#27ae60";
+                resultArea.style.backgroundColor = "#eafaf1";
+                resultArea.style.borderColor = "#27ae60";
+                adviceText.innerText = "คำแนะนำ: ดูแลความสะอาดด้วยตนเองต่อไป และควรตรวจฟันทุก 6 เดือน";
+            } else if(totalScore >= 4.5 && totalScore <= 7){
+                riskLevel.innerText = "เสี่ยงปานกลาง (Moderate)";
+                riskLevel.style.color = "#f39c12";
+                resultArea.style.backgroundColor = "#fef5e7";
+                resultArea.style.borderColor = "#f39c12";
+                adviceText.innerText = "คำแนะนำ: ควรพบทันตแพทย์เพื่อตรวจร่องลึกปริทันต์ และอาจต้องรักษาด้วยการเกลารากฟัน";
+            } else {
+                riskLevel.innerText = "เสี่ยงสูง (Severe)";
+                riskLevel.style.color = "#e74c3c";
+                resultArea.style.backgroundColor = "#fdedec";
+                resultArea.style.borderColor = "#e74c3c";
+                adviceText.innerText = "คำแนะนำ: ควรพบทันตแพทย์เฉพาะทางโรคเหงือกทันที เนื่องจากมีความเสี่ยงที่จะสูญเสียฟัน"; 
+            }
+
+            resultArea.scrollIntoView({behavior: 'smooth'});
+        }
+    </script>
+</body>
+</html>
